@@ -1,16 +1,9 @@
-/*
-import (
-	"fmt"
-	"hash/fnv"
-	"math/rand"
-	"strconv"
-)
-*/
-function georand(w) {
-	var hasher = fnv.New64a();
+var farmhash = require('farmhash');
+
+var georand = function georand(w) {
 	var i = Math.random();
-	hasher.Write([]byte(strconv.Itoa(i)));
-	var val = hasher.Sum64();
+	var hasher = farmhash.hash64(new Buffer(i));
+	var val = farmhash.hash64(new Buffer(hasher)); // FIXME: test further!
 	// Calculate the position of the leftmost 1-bit.
 	var r = 0;
 	for (; val & 0x8000000000000000 == 0 && r < w - 1; r++) {
@@ -19,7 +12,7 @@ function georand(w) {
 	return r;
 }
 
-function rand(m) {
+var rand = function rand(m) {
 	return Math.random() % m;
 }
 
@@ -27,11 +20,11 @@ function rand(m) {
 * @param: s *Sketch
 * @param: flow []byte
 */
-function printVirtualMatrix(s, flow) {
+var printVirtualMatrix = function printVirtualMatrix(s, flow) {
 	for (var i = 0.0; i < s.m; i++) {
 		for (var j = 0.0; j < s.w; j++) {
-			var pos = s.getPos([]byte("pmc"), i, j);
-			if (s.bitmap.get(pos) == false) {
+			var pos = s.getPos("pmc", i, j); // FIXME: use Buffer()
+			if (s.bitmap[pos] == false) {
 				console.log(0);
 			} else {
 				console.log(1);
@@ -40,3 +33,7 @@ function printVirtualMatrix(s, flow) {
 		console.log("");
 	}
 }
+
+module.exports.georand = georand;
+module.exports.rand = rand;
+module.exports.printVirtualMatrix = printVirtualMatrix;

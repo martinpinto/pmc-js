@@ -1,15 +1,17 @@
-var farmhash = require('farmhash');
+var farmhash = require('farmhash'),
+	acquire = require('acquire'),
+	utils = acquire('utils');
 
 /*
 Sketch is a Probabilistic Multiplicity Counting Sketch, a novel data structure
 that is capable of accounting traffic per flow probabilistically, that can be
 used as an alternative to Count-min sketch.
 */
-var Sketch = module.exports = function () {
-	var l;      // float64
-	var m;      // float64
-	var w;      // float64
-	var bitmap; // bitmaps.Bitmap // FIXME: Get Rid of bitmap and use uint32 array
+var Sketch = module.exports = function (l, m, w, bitmap) {
+	this.l = l;      // float64
+	this.m = m;      // float64
+	this.w = w;      // float64
+	this.bitmap = bitmap; // bitmaps.Bitmap // FIXME: Get Rid of bitmap and use uint32 array
 }
 
 /*
@@ -28,7 +30,7 @@ function newSketch(l, m, w) {
 	if (w == 0) {
 		throw new Error("Expected w > 0, got 0");
 	}
-	return new Sketch(l, m, w, new Array(l/8));
+	return new Sketch(l, m, w, new Array(Math.floor(l/8)));
 }
 
 /**
@@ -62,8 +64,8 @@ Sketch.prototype.getPos = function (f, i, j) {
 */
 Sketch.prototype.increment = function (flow) {
   var self = this;
-	var i = rand(self.m);
-	var j = georand(self.w);
+	var i = utils.rand(self.m);
+	var j = utils.georand(self.w);
 	var pos = self.getPos(flow, i, j);
 	self.bitmap.push(pos);
 }
@@ -156,3 +158,11 @@ Sketch.prototype.getEstimate = function (flow) {
 	var z = self.getZSum(flow);
 	return self.m * Math.pow(2, z / self.m) / self.rho(n, p);
 }
+
+function main() {
+  var sketch = newSketch(1, 2, 3, [4, 5]);
+	sketch.increment('test');
+	var count = sketch.getEstimate('test');
+	console.log(count);
+}
+main();
