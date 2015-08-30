@@ -1,0 +1,42 @@
+{
+  "name": "Probabilistic-Multiplicity-Counting",
+  "version": "0.0.1",
+  "description": "PMC to Count-Min is as HyperLogLog to Bloomfilter",
+  "main": "pmc.js",
+  "contributors": [
+    {
+      "name": "Martin Pinto-Bazurco",
+      "email": "martinpintob@gmail.com",
+      "web": "https://www.github.com/martinpinto"
+    }
+  ],
+  "scripts": {
+    "test": "mocha --timeout 65000"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/martinpinto/vhll-js"
+  },
+  "author": "Martin Pinto-Bazurco",
+  "keywords": [
+    "hyperloglog",
+    "cardinality",
+    "hll",
+    "estimator",
+    "stream",
+    "flow",
+    "Count-Min"
+  ],
+  "licenses": [
+    {
+      "name": "MIT",
+      "url": "http://opensource.org/licenses/mit-license.php"
+    }
+  ],
+  "dependencies": {
+    "acquire": "git://github.com/njpatel/acquire.git",
+    "farmhash": "^1.1.0",
+    "mocha": "^2.2.5",
+    "winston": "^1.0.1"
+  }
+}
