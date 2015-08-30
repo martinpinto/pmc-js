@@ -2,6 +2,8 @@
 
 PMC to Count-Min is as HyperLogLog to Bloomfilter
 
+This is the first implementation ever of the Probabilistic Multiplicity Counting Sketch in node.js.
+
 Package pmc provides a Probabilistic Multiplicity Counting Sketch, a novel data structure that is capable of accounting traffic per flow probabilistically, that can be used as an alternative to Count-min sketch.
 The stream processing algorithm — Probabilistic Multiplicity Counting (PMC) — uses probabilistic counting techniques to determine the approximate multiplicity of each element in large streams. It is particularly well suited for traffic measurements on high-speed communication links and likewise applicable for many other purposes.
 
