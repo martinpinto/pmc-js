@@ -1,7 +1,5 @@
 # Probabilistic Multiplicity Counting Sketch (PMC)
 
-[![GoDoc](https://godoc.org/github.com/seiflotfy/pmc?status.svg)](https://godoc.org/github.com/seiflotfy/pmc)
-
 PMC to Count-Min is as HyperLogLog to Bloomfilter
 
 Package pmc provides a Probabilistic Multiplicity Counting Sketch, a novel data structure that is capable of accounting traffic per flow probabilistically, that can be used as an alternative to Count-min sketch.
