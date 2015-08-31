@@ -16,4 +16,7 @@ For details about the algorithm and citations please use this article:
 
 ## Example Usage
 ```javascript
+var sketch = newSketch(1, 2, 3, [4, 5]);
+sketch.increment('test');
+var count = sketch.getEstimate('test');
 ```

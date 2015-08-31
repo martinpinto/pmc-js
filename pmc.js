@@ -164,5 +164,12 @@ function main() {
 	sketch.increment('test');
 	var count = sketch.getEstimate('test');
 	console.log(count);
+
+	//increment a flow 'flow1' 1000000 times
+	for (var i = 0; i < 1000000; i++) {
+	    sketch.increment("flow1")
+	}
+	var count = sketch.getEstimate('test');
+	console.log(count);
 }
 main();
