@@ -6,15 +6,18 @@ var georand = function georand(w) {
 	var val = farmhash.hash64(new Buffer(hasher)); // FIXME: test further!
 	// Calculate the position of the leftmost 1-bit.
 	var r = 0;
-	for (; val & 0x8000000000000000 == 0 && r < w - 1; r++) {
+	for (; r < w - 1; r++) {
+		if (val & 0x8000000000000000 != 0) {
+			return r;
+		}
 		val <<= 1;
 	}
-	return r;
-}
+	return w - 1;
+};
 
 var rand = function rand(m) {
 	return Math.random() % m;
-}
+};
 
 /*
 * @param: s *Sketch

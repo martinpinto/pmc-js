@@ -12,7 +12,7 @@ var Sketch = module.exports = function (l, m, w, bitmap) {
 	this.m = m;      // float64
 	this.w = w;      // float64
 	this.bitmap = bitmap; // bitmaps.Bitmap // FIXME: Get Rid of bitmap and use uint32 array
-}
+};
 
 /*
 * New returns a PMC Sketch with the properties:
@@ -30,7 +30,7 @@ function newSketch(l, m, w) {
 	if (w == 0) {
 		throw new Error("Expected w > 0, got 0");
 	}
-	return new Sketch(l, m, w, new Array(Math.floor(l/8)));
+	return new Sketch(l, m, w, new Array(Math.floor(l)));
 }
 
 /**
@@ -54,9 +54,9 @@ function newForMaxFlows(maxFlows) {
 Sketch.prototype.getPos = function (f, i, j) {
   var self = this;
 	var s = "" + i + f + j;
-	var hash = farmhash.hash64(new Buffer(s));
-	return hash % self.l;
-}
+	var hash = farmhash.hash64(new Buffer(s)); // farmhash returns a string
+	return parseInt(hash) % self.l;
+};
 
 /**
 * Increment the count of the flow by 1
@@ -68,7 +68,7 @@ Sketch.prototype.increment = function (flow) {
 	var j = utils.georand(self.w);
 	var pos = self.getPos(flow, i, j);
 	self.bitmap.push(pos);
-}
+};
 
 /*
 * @param: flow []byte
@@ -88,7 +88,7 @@ Sketch.prototype.getZSum = function (flow) {
 		z += j;
 	}
 	return z;
-}
+};
 
 /*
 * @param: flow []byte
@@ -103,7 +103,7 @@ Sketch.prototype.getEmptyRows = function (flow) {
 		}
 	}
 	return k;
-}
+};
 
 Sketch.prototype.getP = function () {
 	var self = this;
@@ -114,7 +114,7 @@ Sketch.prototype.getP = function () {
 		}
 	}
 	return ones / self.l;
-}
+};
 
 function qk(k, n, p) {
 	var result = 1.0;
@@ -131,12 +131,12 @@ Sketch.prototype.getE = function (n, p) {
 		result += (k * (qk(k, n, p) - qk(k + 1, n, p)));
 	}
 	return result;
-}
+};
 
 Sketch.prototype.rho = function (n, p) {
   var self = this;
 	return Math.pow(2, self.getE(n, p)) / n;
-}
+};
 
 /**
 * GetEstimate returns the estimated count of a given flow
@@ -144,32 +144,32 @@ Sketch.prototype.rho = function (n, p) {
 */
 Sketch.prototype.getEstimate = function (flow) {
 	var self = this;
-  var p = self.getP();
+	if (self.p == 0) {
+		self.p = self.getP();
+	}
 	var k = self.getEmptyRows(flow);
 	// Use const due to quick conversion against 0.78 (n = 1000000.0)
 	// n := -2 * m * math.Log((k)/(m*(1-p)))
+	var e = 0.0;
 	var n = 100000.0;
 
 	// Dealing with small multiplicities
-	if (k / (1 - p) > 0.3 * self.m) {
-		return -2 * self.m * Math.log(k / (self.m * (1 - p)));
+	if (k / (1 - self.p) > 0.3 * self.m) {
+		e = -2 * self.m * Math.log(k / (self.m * (1 - self.p)));
+	} else {
+		var z = self.getZSum(flow);
+		e = self.m * Math.pow(2, z / self.m) / self.rho(n, self.p);
 	}
-
-	var z = self.getZSum(flow);
-	return self.m * Math.pow(2, z / self.m) / self.rho(n, p);
-}
+	return e;
+};
 
 function main() {
-  var sketch = newSketch(1, 2, 3, [4, 5]);
-	sketch.increment('test');
-	var count = sketch.getEstimate('test');
-	console.log(count);
-
-	//increment a flow 'flow1' 1000000 times
+  var sketch = newForMaxFlows(1000000);
+	// increment a flow 'flow1' 1000000 times
 	for (var i = 0; i < 1000000; i++) {
-	    sketch.increment("flow1")
+     sketch.increment("flow1");
 	}
-	var count = sketch.getEstimate('test');
+	var count = sketch.getEstimate('flow1');
 	console.log(count);
 }
 main();
