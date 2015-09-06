@@ -17,9 +17,9 @@ For details about the algorithm and citations please use this article:
 ## Example Usage
 ```javascript
   var sketch = newForMaxFlows(1000000);
-	// increment a flow 'flow1' 1000000 times
-	for (var i = 0; i < 1000000; i++) {
-     sketch.increment("flow1");
-	}
-	var count = sketch.getEstimate('flow1');
+  // increment a flow 'flow1' 1000000 times
+  for (var i = 0; i < 1000000; i++) {
+      sketch.increment("flow1");
+  }
+  var count = sketch.getEstimate('flow1');
 ```
